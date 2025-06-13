@@ -14,7 +14,6 @@ export const authConfig = {
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
-          hd: "smktelkom-mlg.sch.id",
         },
       },
       async profile(profile) {

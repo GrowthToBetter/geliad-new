@@ -1,7 +1,7 @@
 "use server";
 
 import { getServerSession } from "@/auth";
-import { Class, Role } from "@/generated/prisma";
+import { Class, RequestStatus, Role } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { userFullPayload } from "./relationship";
@@ -76,7 +76,7 @@ export const updateUploadFileByLink = async (
     const name = data.get("name") as string;
     const type = data.get("type") as string;
     const Classes = data.get("kelas") as Class;
-    const Genre = data.get("Genre");
+    const Genre = data.get("genre");
     if (!Genre) {
       throw new Error("eror");
     }
@@ -150,5 +150,119 @@ export const updateUploadFile = async (
     return uploadedFile;
   } catch (error) {
     throw new Error((error as Error).message);
+  }
+};
+
+export const DeleteRoleFileFromNotif = async (id: string) => {
+  try {
+    const session = await getServerSession();
+    if (!session) {
+      throw new Error("eror");
+    }
+
+    const role = "DELETE" as Role;
+    const update = await prisma.fileWork.update({
+      where: { id: id },
+      data: {
+        userRole: role,
+      },
+    });
+    if (!update) {
+      throw new Error("eror");
+    }
+    revalidatePath("/profile/notification/Validasi");
+    return update;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};
+
+export const updateStatus = async (id: string, data: FormData) => {
+  try {
+    const status = data.get("status") as RequestStatus;
+    const update = await prisma.fileWork.update({
+      where: { id: id },
+      data: {
+        status,
+      },
+    });
+    if (!update) {
+      throw new Error("eror");
+    }
+    revalidatePath("/AjukanKarya");
+    return update;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};
+export const Banding = async (id: string) => {
+  try {
+    const session = await getServerSession();
+    const update = await prisma.fileWork.update({
+      where: { id: id },
+      data: {
+        status:"PENDING",
+        userRole: session?.user.role,
+      },
+    });
+    if (!update) {
+      throw new Error("eror");
+    }
+    revalidatePath("/AjukanKarya");
+    return update;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};
+
+export const commentFile = async (
+  comment: string,
+  file: { connect: { id: string } },
+  user: { connect: { id: string } }
+) => {
+  try {
+    const createComment = await prisma.comment.create({
+      data: {
+        file,
+        user: {
+          connect: {
+            id: user.connect.id,
+          },
+        },
+        Text: comment,
+      },
+    });
+    if (!createComment) {
+      throw new Error("eror");
+    }
+    return createComment;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};
+export const DeleteFile = async (id: string) => {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return { status: 401, message: "Auth Required" };
+    }
+
+      const del = await prisma.fileWork.delete({
+        where: { id },
+      });
+  
+      if (!del) {
+        return { status: 400, message: "Failed to delete from database!" };
+      }
+  
+      revalidatePath("/AjukanKarya");
+      return { status: 200, message: "Delete Success!" };
+
+  } catch (error) {
+    console.error("Error in DeleteFile:", error);
+    return { 
+      status: 500, 
+      message: `Error deleting file: ${(error as Error).message}` 
+    };
   }
 };

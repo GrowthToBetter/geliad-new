@@ -24,7 +24,7 @@ export default async function page() {
       return redirect("/pilihRole");
   }
 
-  if (!session?.user?.email) return redirect("/signin");
+  if (!session?.user?.email) return redirect("/auth/signin");
   return (
     <AjukanKarya
       userData={userData as userFullPayload}

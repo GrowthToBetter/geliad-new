@@ -1,6 +1,6 @@
 import React from "react";
-import Home from "./_components/Profile";
-import {prisma} from "@/lib/prisma";
+import Home from "@/components/profile/Profile";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/auth";
 import { userFullPayload } from "@/utils/relationship";
@@ -19,8 +19,9 @@ export default async function page() {
     },
   });
   if (userData) {
-    if (session?.user?.email && !userData.title && userData?.role==="SISWA") return redirect("/pilihRole");
+    if (session?.user?.email && !userData.title && userData?.role === "SISWA")
+      return redirect("/pilihRole");
   }
-  if (!session?.user?.email) return redirect("/signin");
+  if (!session?.user?.email) return redirect("/auth/signin");
   return <Home userData={userData as userFullPayload} />;
 }

@@ -303,7 +303,7 @@ export default function Navbar() {
                         <DropdownMenuItem
                           onClick={() => {
                             setIsMenuOpen(false);
-                            signOut({ callbackUrl: "/signin" });
+                            signOut({ callbackUrl: "/auth/signin" });
                           }}
                         >
                           Sign Out

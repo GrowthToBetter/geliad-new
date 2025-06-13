@@ -15,17 +15,22 @@ export default auth(async function middleware(req) {
   if (isLoggedIn && isOnAuthPage) {
     return NextResponse.redirect(
       new URL(
-        req.auth?.user?.role !== "Admin" ? "/" : "/admin",
+        !["ADMIN", "SUPERADMIN"].includes(req.auth?.user?.role)
+          ? "/"
+          : "/admin",
         req.nextUrl
       )
     );
   }
 
-  if (isOnAdminPage && req.auth?.user?.role !== "Admin") {
+  if (
+    isOnAdminPage &&
+    !["ADMIN", "SUPERADMIN"].includes(req.auth?.user?.role)
+  ) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 });
 
 export const config = {
-  matcher: [ "/admin/:path*", "/auth/signin"],
+  matcher: ["/admin/:path*", "/auth/signin"],
 };

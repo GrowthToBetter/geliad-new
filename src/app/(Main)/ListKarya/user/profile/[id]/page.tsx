@@ -15,7 +15,7 @@ export default async function profilePartner({
 
   if (!session?.user?.email) {
     const currentPath = (await headers()).get("x-nextjs-pathname") || "/";
-    return redirect(`/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
+    return redirect(`/auth/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
   }
   const findUser = await prisma.user.findFirst({
     where: { id: params.id },

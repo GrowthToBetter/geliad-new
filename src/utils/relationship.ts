@@ -9,7 +9,7 @@ export type userFullPayload = Prisma.UserGetPayload<{
     userAuth: true;
     File: {
       include: {
-        Tuser: { include: { userAuth: true } };
+        user: { include: { userAuth: true } };
         TaskValidator: true;
         comment: { include: { user: true } };
       };

@@ -98,6 +98,7 @@ import {
   AlertCircle,
   Clock,
   Download,
+  Scale,
 } from "lucide-react";
 
 import { Class, Genre, RequestStatus, Role } from "@prisma/client";
@@ -112,6 +113,9 @@ import {
 } from "@/utils/cloudinary.utils";
 import { ModalEditCover } from "./ModalEditCoverFile";
 import {
+  Banding,
+  DeleteFile,
+  updateStatus,
   updateUploadFile,
   updateUploadFileByLink,
 } from "@/utils/FileServerAction";
@@ -373,7 +377,15 @@ export default function UploadPage({
       formData.append("role", userData.role);
       formData.append("genre", linkUploadForm.genre);
       formData.append("kelas", linkUploadForm.class);
-
+      console.log({
+        name: formData.get("name"),
+        type: formData.get("type"),
+        url: formData.get("url"),
+        userId: formData.get("userId"),
+        role: formData.get("role"),
+        genre: formData.get("genre"),
+        kelas: formData.get("kelas"),
+      });
       // Replace with your actual function
       // const result = await updateUploadFileByLink(formData, userData);
 
@@ -403,7 +415,7 @@ export default function UploadPage({
   };
 
   // Delete handler
-  const handleDelete = async (fileId: string, file: FileFullPayload) => {
+  const handleDelete = async (fileId: string) => {
     const loading = toast.loading("Deleting file...");
 
     try {
@@ -411,7 +423,7 @@ export default function UploadPage({
       // const response = await DeleteFile(fileId, file);
 
       // Simulate success for now
-      const response = { status: 200, message: "File deleted successfully" };
+      const response = await DeleteFile(fileId);
 
       if (response.status === 200) {
         toast.success("File deleted successfully", { id: loading });
@@ -421,6 +433,20 @@ export default function UploadPage({
       }
     } catch (error) {
       toast.error("Failed to delete file", { id: loading });
+      console.error(error);
+    }
+  };
+  const banding = async (id: string) => {
+    try {
+      const response = await Banding(id);
+      if (response) {
+        toast.success("File banding successfully");
+        router.refresh();
+      } else {
+        toast.error("something went wrong");
+      }
+    } catch (error) {
+      toast.error("Failed to banding file");
       console.error(error);
     }
   };
@@ -886,6 +912,16 @@ export default function UploadPage({
                           <Edit className="h-4 w-4" />
                           Edit
                         </Button>
+                        <Button
+                          onClick={() => {
+                            banding(file.id);
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2">
+                          <Scale className="h-4 w-4" />
+                          Banding
+                        </Button>
                         {isEditModalOpen[file.id] && (
                           <ModalEditCover
                             id={file.id}
@@ -920,7 +956,7 @@ export default function UploadPage({
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDelete(file.id, file)}
+                                onClick={() => handleDelete(file.id)}
                                 className="bg-red-600 hover:bg-red-700">
                                 Delete
                               </AlertDialogAction>
@@ -969,12 +1005,12 @@ export default function UploadPage({
             </DialogContent>
           </Dialog>
         )}
-        
+
         {previewCloud && (
-        <PDFPreviewDialog
-          previewCloud={previewCloud}
-          setPreviewCloud={setPreviewCloud}
-        />
+          <PDFPreviewDialog
+            previewCloud={previewCloud}
+            setPreviewCloud={setPreviewCloud}
+          />
         )}
       </div>
     </div>
