@@ -31,6 +31,7 @@ import {
   PersonStanding,
 } from "lucide-react";
 import { addLike, addViews } from "@/utils/FileServerAction";
+import PDFPreviewDialog from "../Ajukan/PDFPreview";
 
 export default function Main({
   ListData,
@@ -50,6 +51,7 @@ export default function Main({
   const [openRead, setOpenRead] = useState<{
     [key: string]: { isOpen: boolean; link: string };
   }>({});
+  const [previewCloud, setPreviewCloud] = useState<string | null>(null);
   const [like, setLike] = useState<boolean>(false);
 
   const router = useRouter();
@@ -109,6 +111,9 @@ export default function Main({
         link: prev[id]?.link || link,
       },
     }));
+  };
+  const handleReadCloudinary = (link: string) => {
+    setPreviewCloud(link);
   };
 
   const addLikes = async (file: FileFullPayload) => {
@@ -348,6 +353,8 @@ export default function Main({
                               user.path.includes("Drive")
                             ) {
                               handleRead(user.id, user.permisionId as string);
+                            } else if (user.path.includes("cloudinary")) {
+                              handleReadCloudinary(user.path as string);
                             } else {
                               router.push(user.path);
                             }
@@ -388,6 +395,12 @@ export default function Main({
                       </div>
                     </DialogContent>
                   </Dialog>
+                  {previewCloud && (
+                    <PDFPreviewDialog
+                      previewCloud={previewCloud}
+                      setPreviewCloud={setPreviewCloud}
+                    />
+                  )}
                 </Card>
               ))}
             </div>

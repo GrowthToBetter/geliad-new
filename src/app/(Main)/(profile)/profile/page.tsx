@@ -1,12 +1,12 @@
 import React from "react";
 import Home from "./_components/Profile";
-import prisma from "@/lib/prisma";
-import { nextGetServerSession } from "@/lib/authOption";
+import {prisma} from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { userFullPayload } from "@/utils/relationsip";
+import { getServerSession } from "@/auth";
+import { userFullPayload } from "@/utils/relationship";
 
 export default async function page() {
-  const session = await nextGetServerSession();
+  const session = await getServerSession();
   const userData = await prisma.user.findFirst({
     where: {
       id: session?.user?.id,

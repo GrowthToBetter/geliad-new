@@ -969,27 +969,12 @@ export default function UploadPage({
             </DialogContent>
           </Dialog>
         )}
-        {/* <PDFPreviewDialog
-            previewCloud={previewCloud}
-            setPreviewCloud={setPreviewCloud}
-          /> */}
+        
         {previewCloud && (
-          <Dialog
-            open={!!previewCloud}
-            onOpenChange={() => setPreviewCloud(null)}>
-            <DialogContent className="max-w-5xl h-[90vh]">
-              <DialogHeader>
-                <DialogTitle>PDF Preview</DialogTitle>
-              </DialogHeader>
-              <div className="h-full">
-                <iframe
-                  src={previewCloud}
-                  className="w-full h-full rounded-md border"
-                  allow="fullscreen"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+        <PDFPreviewDialog
+          previewCloud={previewCloud}
+          setPreviewCloud={setPreviewCloud}
+        />
         )}
       </div>
     </div>
