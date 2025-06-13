@@ -16,6 +16,7 @@
 /src/generated
 # testing
 /coverage
+data.json
 
 # next.js
 /.next/
