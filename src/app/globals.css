@@ -1,6 +1,195 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
 
+:root {
+  --radius: 0.5rem;
+
+  /* Light theme - sesuai dengan home design */
+  --background: hsl(215, 25%, 97%); /* from-slate-50 equivalent */
+  --foreground: hsl(222.2, 84%, 4.9%);
+
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222.2, 84%, 4.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222.2, 84%, 4.9%);
+
+  /* Primary menggunakan blue-600 dari home */
+  --primary: hsl(221, 83%, 53%); /* blue-600 equivalent */
+  --primary-foreground: hsl(0, 0%, 100%);
+
+  /* Secondary dengan tone yang soft */
+  --secondary: hsl(215, 25%, 95%);
+  --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
+
+  --muted: hsl(215, 25%, 95%);
+  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+
+  /* Accent menggunakan purple-600 dari gradien */
+  --accent: hsl(262, 83%, 58%); /* purple-600 equivalent */
+  --accent-foreground: hsl(0, 0%, 100%);
+
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+
+  --border: hsl(215, 25%, 88%);
+  --input: hsl(215, 25%, 88%);
+  --ring: hsl(221, 83%, 53%); /* blue-600 untuk focus ring */
+
+  /* Chart colors sesuai tema blue-purple */
+  --chart-1: hsl(221, 83%, 53%); /* blue-600 */
+  --chart-2: hsl(262, 83%, 58%); /* purple-600 */
+  --chart-3: hsl(45, 93%, 47%); /* yellow-500 untuk accent */
+  --chart-4: hsl(24.6, 95%, 53.1%); /* orange untuk highlight */
+  --chart-5: hsl(142.1, 76.2%, 36.3%); /* green untuk success */
+
+  /* Sidebar menggunakan tema blue */
+  --sidebar: hsl(215, 25%, 97%);
+  --sidebar-foreground: hsl(222.2, 47.4%, 11.2%);
+  --sidebar-primary: hsl(221, 83%, 53%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(215, 25%, 92%);
+  --sidebar-accent-foreground: hsl(222.2, 47.4%, 11.2%);
+  --sidebar-border: hsl(215, 25%, 88%);
+  --sidebar-ring: hsl(221, 83%, 53%);
+}
+
+.dark {
+  /* Dark theme dengan nuansa blue-purple yang lebih gelap */
+  --background: hsl(222, 47%, 4%); /* dark blue background */
+  --foreground: hsl(213, 31%, 91%);
+
+  --card: hsl(222, 47%, 6%);
+  --card-foreground: hsl(213, 31%, 91%);
+  --popover: hsl(222, 47%, 6%);
+  --popover-foreground: hsl(213, 31%, 91%);
+
+  /* Primary tetap blue-600 tapi sedikit lebih terang untuk kontras */
+  --primary: hsl(221, 83%, 58%);
+  --primary-foreground: hsl(0, 0%, 100%);
+
+  --secondary: hsl(222, 47%, 8%);
+  --secondary-foreground: hsl(213, 31%, 91%);
+
+  --muted: hsl(222, 47%, 8%);
+  --muted-foreground: hsl(215.4, 16.3%, 56.9%);
+
+  /* Accent purple sedikit lebih terang untuk dark mode */
+  --accent: hsl(262, 83%, 65%);
+  --accent-foreground: hsl(0, 0%, 100%);
+
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+
+  --border: hsl(222, 47%, 12%);
+  --input: hsl(222, 47%, 12%);
+  --ring: hsl(221, 83%, 58%);
+
+  /* Chart colors untuk dark mode */
+  --chart-1: hsl(221, 83%, 58%);
+  --chart-2: hsl(262, 83%, 65%);
+  --chart-3: hsl(45, 93%, 58%);
+  --chart-4: hsl(24.6, 95%, 63%);
+  --chart-5: hsl(142.1, 70.6%, 45.3%);
+
+  /* Sidebar dark */
+  --sidebar: hsl(222, 47%, 4%);
+  --sidebar-foreground: hsl(213, 31%, 91%);
+  --sidebar-primary: hsl(221, 83%, 58%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(222, 47%, 8%);
+  --sidebar-accent-foreground: hsl(213, 31%, 91%);
+  --sidebar-border: hsl(222, 47%, 12%);
+  --sidebar-ring: hsl(221, 83%, 58%);
+}
+
+@theme {
+  --animate-collapsible-down: collapsible-down 0.2s ease-out;
+  --animate-collapsible-up: collapsible-up 0.2s ease-out;
+  @keyframes collapsible-down {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+  @keyframes collapsible-up {
+    0% {
+      height: var(--radix-collapsible-content-height);
+    }
+    100% {
+      height: 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  img {
+    @apply inline-block;
+  }
+  
+  /* Custom scrollbar untuk konsistensi tema */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+}

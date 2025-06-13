@@ -1,0 +1,11 @@
+LOAD DATABASE
+     FROM mysql://root:9io+KHRSJ31+jRIzyTlrkB7m4t0evDfNRDMlRoNEr0o=@localhost:3306/db_geliad
+     INTO postgresql://postgres.goagzmkdyqwlgweychtt:a2H+%T8.Uq&GVE?@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres
+
+WITH include no drop,
+     create tables,
+     preserve index names,
+     batch rows = 1000
+
+SET work_mem to '16MB',
+    maintenance_work_mem to '512MB';

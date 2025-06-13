@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -12,52 +14,112 @@ model User {
   email         String     @unique
   photo_profile String?
   name          String
-  clasess       Type?
+  clasess       Class?
+  title         Title?
+  detail        Int?
   absent        String?
   Phone         String?
+  emailVerified DateTime?
+  image         String? // menggantikan photo_profile
+  accounts      Account[]
+  sessions      Session[]
   role          Role       @default(SISWA)
+  status        Status     @default(NOTGRADUATE)
   gender        Gender?    @default(Male)
   userAuth      UserAuth?
+  taskValidator fileWork[] @relation("task_validator")
+  Sugestion     String?
+  ClassNumber   String?
+  SchoolOrigin  String?
+  validatorId   String?
   generation    String?
   cover         String?
   File          fileWork[] @relation("file_id")
+  validator     User?      @relation("teacherToStudent", fields: [validatorId], references: [id])
+  user          User[]     @relation("teacherToStudent")
   comment       comment[]  @relation("comment")
 }
 
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 model fileWork {
-  id          String        @id @default(uuid()) @map("file_id") @db.Char(36)
-  filename    String
-  userType    Type
-  type        String?
-  status      RequestStatus @default(PENDING)
-  userId      String
-  user        User?         @relation("file_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  path        String
-  description String?       @db.LongText()
-  coverFile   String?
-  genre       String
-  Like        Int           @default(0)
-  views       Int           @default(0)
-  userRole    Role          @default(SISWA)
-  createdAt   DateTime      @default(now())
-  suggest     comment[]     @relation("sugest_file")
-  comment     comment[]     @relation("comment_file")
+  id            String        @id @default(uuid()) @map("file_id") @db.Char(36)
+  filename      String
+  mimetype      String
+  size          Int
+  userClasses   Class?
+  status        RequestStatus @default(PENDING)
+  userId        String
+  TaskValidator User[]        @relation("task_validator")
+  user          User?         @relation("file_id", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  path          String
+  coverFile     String?
+  permisionId   String?
+  genre         String?
+  Like          Int           @default(0)
+  views         Int           @default(0)
+  userRole      Role          @default(SISWA)
+  createdAt     DateTime      @default(now())
+  comment       comment[]     @relation("comment_file")
 }
 
 model comment {
-  id           String    @id @default(uuid()) @map("comment_id") @db.Char(36)
-  Text         String?
-  userId       String?
-  fileId       String?
-  user         User?     @relation("comment", fields: [userId], references: [id])
-  file         fileWork? @relation("comment_file", fields: [fileId], references: [id])
-  fileSugestId String?
-  fileSugest   fileWork? @relation("sugest_file", fields: [fileSugestId], references: [id])
+  id     String     @id @default(uuid()) @map("comment_id") @db.Char(36)
+  Text   String?
+  userId String?
+  user   User?      @relation("comment", fields: [userId], references: [id])
+  file   fileWork[] @relation("comment_file")
 }
 
 model Genre {
   id    String @id @default(uuid()) @map("comment_id") @db.Char(36)
   Genre String
+}
+
+enum Class {
+  X
+  XI
+  XII
+}
+
+enum Title {
+  RPL
+  PG
+  TKJ
 }
 
 model UserAuth {
@@ -68,12 +130,16 @@ model UserAuth {
   user       User      @relation(fields: [userEmail], references: [email], onDelete: Cascade)
 }
 
+enum Status {
+  NOTGRADUATE
+  GRADUATE
+}
+
 enum Role {
   SISWA
   GURU
   ADMIN
   VALIDATOR
-  VIEWER
   DELETE
 }
 
@@ -86,10 +152,4 @@ enum RequestStatus {
   PENDING
   VERIFIED
   DENIED
-}
-
-enum Type {
-  SISWA
-  GURU
-  ALUMNI
 }

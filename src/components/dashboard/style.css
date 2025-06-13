@@ -1,0 +1,420 @@
+.cv-page {
+  width: 21cm;
+  height: 29.68cm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cv-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.kop-header {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  z-index: 10;
+  background-color: white;
+}
+
+.kop-image {
+  width: 100%;
+  display: block;
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+
+.cv-content {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  margin-top: 140px;
+  height: calc(100% - 140px);
+  position: relative;
+  z-index: 5;
+}
+
+.cv-left-column {
+  width: 32%;
+  background-color: #b02228;
+  color: white;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 1;
+  margin-top: 0;
+  border-top: 15px solid white;
+  background-repeat: no-repeat;
+}
+
+.cv-left-column::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background: url("/pattern.svg") center center;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat; */
+  opacity: 0.08;
+  z-index: -1;
+}
+
+.cv-left-column::after {
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  margin-top: 5px;
+  position: relative;
+}
+
+.section,
+.profile-image-container {
+  position: relative;
+  z-index: 2;
+}
+
+.profile-image {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  background-color: #e0f0ff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-content {
+  font-size: 13px;
+  padding: 0 5px;
+}
+
+.section-content p {
+  margin-bottom: 6px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  padding-right: 10px;
+  display: flex;
+}
+
+.section-content p strong {
+  min-width: 70px;
+  margin-right: 5px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 5px;
+}
+
+.section-content ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.section-content li {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+}
+
+.section-content li::before {
+  content: "•";
+  margin-right: 8px;
+}
+
+.cv-right-column {
+  flex: 1;
+  padding: 20px 25px;
+  background-color: white;
+  color: #333;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+}
+
+.name-section {
+  border-bottom: 2px solid #0047ab;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.student-name {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+  margin-bottom: 3px;
+}
+
+.expertise {
+  font-size: 16px;
+  color: #555;
+}
+
+.achievements-section {
+  flex: 1;
+  padding: 0 10px;
+}
+
+.achievements-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  border-left: 4px solid #0047ab;
+  padding-left: 8px;
+}
+
+.achievements-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.year-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+
+.year-header {
+  display: flex;
+  align-items: center;
+}
+
+.year-badge {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #0047ab;
+  margin-right: 8px;
+}
+
+.achievement-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.achievement-item {
+  margin-bottom: 0.15rem;
+  padding: 0.15rem 0;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  padding-left: 1rem;
+  position: relative;
+  color: #333;
+}
+
+.achievement-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #0047ab;
+}
+
+.achievement-item:hover {
+  color: #0047ab;
+  transform: translateX(2px);
+}
+
+.achievement-title {
+  font-weight: 500;
+  color: #333;
+  margin-right: 4px;
+}
+
+.achievement-details {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.signature-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 15px;
+}
+
+.signature-section {
+  margin-top: auto;
+  text-align: left;
+  padding-top: 15px;
+}
+
+.signature-date {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.signature-title {
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.signature-image {
+  height: 50px;
+  width: auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.signature-image img {
+  max-height: 100%;
+  max-width: 140px;
+}
+
+.signature-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.signature-id {
+  font-size: 13px;
+}
+
+.footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.school-tag {
+  background-color: #0047ab;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+}
+
+.floral-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  opacity: 0.1;
+  z-index: 0;
+  transform-origin: center;
+  width: 100%;
+  height: 100%;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .cv-page {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    box-shadow: none;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    display: block !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .kop-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .cv-left-column {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .school-tag {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .cv-content {
+    margin-top: 140px;
+  }
+
+  .floral-decoration {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+}

@@ -1,22 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  bundlePagesRouterDependencies: true,
-  serverExternalPackages: ['cloudinary'],
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "6mb",
-    },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-        port: "",
-        pathname: "/**",
-      },
-    ],
+    domains: ["res.cloudinary.com"],
   },
 };
 

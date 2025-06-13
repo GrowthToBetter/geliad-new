@@ -1,40 +1,31 @@
-import { withAuth } from "next-auth/middleware";
+import NextAuth from "next-auth";
+import { authConfig } from "./lib/config/auth.cofig";
 import { NextResponse } from "next/server";
 
-// middleware is applied to all routes, use conditionals to select
-export default withAuth(
-  function middleware(req) {
-    const { token } = req.nextauth;
-    const { pathname } = req.nextUrl;
+const { auth } = NextAuth(authConfig);
+export default auth(async function middleware(req) {
+  const isLoggedIn = !!req.auth;
+  const isOnAuthPage = req.nextUrl.pathname.startsWith("/auth");
+  const isOnAdminPage = req.nextUrl.pathname.startsWith("/admin");
 
-    if (
-      (pathname.startsWith("/admin") && (!token || token.role === "VIEWER")) ||
-      (pathname.startsWith("/product") && (!token || token.role === "VIEWER")) ||
-      (pathname.startsWith("/karya") && (!token || token.role === "VIEWER")) ||
-      (pathname.startsWith("/notification") && (!token || token.role === "VIEWER")) ||
-      (pathname.startsWith("/validasi") && (!token || token.role === "VIEWER"))
-    ) {
-      return NextResponse.redirect(
-        new URL(`/signin?callbackUrl=${pathname}`, req.url),
-      );
-    }
+  if (!isLoggedIn && !isOnAuthPage) {
+    return NextResponse.redirect(new URL("/auth/signin", req.nextUrl));
+  }
 
-    if (
-      (pathname.startsWith("/auth") && token) ||
-      (pathname.startsWith("/admin") && token?.role !== "ADMIN") ||
-      (pathname.startsWith("/admin/dataCategory") && token?.role !== "ADMIN") ||
-      (pathname.startsWith("/admin/studentData") && token?.role !== "ADMIN")
-    ) {
-      return NextResponse.rewrite(new URL("/unauthorized", req.url), {
-        status: 403,
-      });
-    }
+  if (isLoggedIn && isOnAuthPage) {
+    return NextResponse.redirect(
+      new URL(
+        req.auth?.user?.role !== "Admin" ? "/" : "/admin",
+        req.nextUrl
+      )
+    );
+  }
 
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: () => true,
-    },
-  },
-);
+  if (isOnAdminPage && req.auth?.user?.role !== "Admin") {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+});
+
+export const config = {
+  matcher: [ "/admin/:path*", "/auth/signin"],
+};
