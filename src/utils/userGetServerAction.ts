@@ -4,7 +4,7 @@ import { Class, Gender, Role, Status } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { createUser, updateUser } from "./user.query";
-
+import { hash } from "bcrypt";
 export const UpdateGeneralProfileById = async (data: FormData) => {
   try {
     const session = await getServerSession();
@@ -66,6 +66,106 @@ export const UpdateGeneralProfileById = async (data: FormData) => {
   }
 };
 
+export const UpdateAdminById = async (id: string, data: FormData) => {
+  try {
+    const session = await getServerSession();
+
+    // Authorization check
+    if (!session?.user) {
+      return { status: 401, message: "Auth Required" };
+    }
+
+    if (session.user.role !== "ADMIN") {
+      return { status: 403, message: "Unauthorized" };
+    }
+
+    // Get data from form
+    const email = data.get("email")?.toString().toLowerCase().trim() || "";
+    const name = data.get("name")?.toString().trim() || "";
+    const rawPassword = data.get("password")?.toString() || "";
+    const role = data.get("role") as Role;
+
+    // Validate required fields
+    if (!email || !name || !role) {
+      return { status: 400, message: "Missing required fields" };
+    }
+
+    const password = rawPassword ? await hash(rawPassword, 10) : undefined;
+
+    // If ID not provided, we are creating a new user
+    if (!id) {
+      const existingUser = await prisma.user.findUnique({ where: { email } });
+
+      if (existingUser) {
+        return { status: 409, message: "Email already in use" };
+      }
+
+      await prisma.user.create({
+        data: {
+          email,
+          name,
+          role,
+          userAuth: {
+            create: {
+              password: password!,
+              last_login: new Date(),
+            },
+          },
+        },
+      });
+
+      revalidatePath("/admin");
+      return { status: 200, message: "User created successfully" };
+    }
+
+    // Update existing user using upsert logic
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+      include: { userAuth: true },
+    });
+
+    if (!existingUser) {
+      return { status: 404, message: "User not found" };
+    }
+
+    // Prevent email conflict
+    const otherUserWithSameEmail = await prisma.user.findFirst({
+      where: {
+        email,
+        NOT: { id },
+      },
+    });
+
+    if (otherUserWithSameEmail) {
+      return { status: 409, message: "Email already in use by another user" };
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: {
+        name,
+        email,
+        role,
+        userAuth: {
+          update: {
+            ...(password && { password }),
+            last_login: new Date(),
+          },
+        },
+      },
+    });
+
+    revalidatePath("/admin");
+    return { status: 200, message: "User updated successfully" };
+  } catch (error) {
+    console.error("Error in upsert user:", error);
+    return {
+      status: 500,
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    };
+  }
+};
+
 export const UpdateCoverProfile = async (url: string) => {
   try {
     const session = await getServerSession();
@@ -85,6 +185,30 @@ export const UpdateCoverProfile = async (url: string) => {
     return { status: true, message: "Success to update Photo Profile" };
   } catch (error) {
     console.log(error);
+    throw new Error((error as Error).message);
+  }
+};
+
+export const DeleteUser = async (id: string) => {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return { status: 401, message: "Auth Required" };
+    }
+    if (session?.user.role === "SISWA") {
+      return { status: 401, message: "Unauthorize" };
+    }
+    const del = await prisma.user.delete({
+      where: { id },
+    });
+    if (!del) {
+      return { status: 400, message: "Failed to delete user!" };
+    }
+    revalidatePath("/admin/studentData");
+    revalidatePath("/admin");
+    return { status: 200, message: "Delete Success!" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
     throw new Error((error as Error).message);
   }
 };

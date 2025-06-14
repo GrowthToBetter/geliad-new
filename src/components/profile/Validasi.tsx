@@ -399,6 +399,22 @@ export default function ValidationPage({
                                 <XCircle className="h-4 w-4" />
                                 Deny
                               </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  toast.error(
+                                    "this feature is under development"
+                                  );
+                                }}
+                                className="flex items-center gap-2 text-purple-600">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor">
+                                  <path d="M9 2a1 1 0 0 1 1 1v1.07A7.001 7.001 0 0 1 17.93 11H19a1 1 0 1 1 0 2h-1.07A7.001 7.001 0 0 1 10 20.93V22a1 1 0 1 1-2 0v-1.07A7.001 7.001 0 0 1 4.07 13H3a1 1 0 1 1 0-2h1.07A7.001 7.001 0 0 1 8 4.07V3a1 1 0 0 1 1-1zm1 4.07V5a5 5 0 1 0 5 5h-.07a6.987 6.987 0 0 1-4.93-3.93z" />
+                                </svg>
+                                Check Plagiarism
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 onClick={() => {

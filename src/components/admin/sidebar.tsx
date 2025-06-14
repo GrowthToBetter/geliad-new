@@ -6,9 +6,9 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronRight,
-  ShoppingBasketIcon,
   ListChecksIcon,
   User2,
+  CheckCheckIcon
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,20 +32,20 @@ const navItems = [
     href: "/admin",
   },
   {
-    label: "Verifikasi Buah",
-    icon: ShoppingBasketIcon,
-    href: "/admin/fruit",
-  },
-  {
-    label: "List Fruit",
-    icon: ListChecksIcon,
-    href: "/admin/listFruit",
-  },
-  {
-    label: "List Supplier",
+    label: "Student Data",
     icon: User2,
-    href: "/admin/listSupplier",
-  }
+    href: "/admin/student",
+  },
+  {
+    label: "Category",
+    icon: ListChecksIcon,
+    href: "/admin/category",
+  },
+  {
+    label: "Validated Paper",
+    icon: CheckCheckIcon,
+    href: "/profile/notification/Validasi",
+  },
 ];
 
 export function AppSidebar() {
@@ -79,16 +79,15 @@ export function AppSidebar() {
                         "transition-colors py-3",
                         isActive
                           ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
-                          : "hover:bg-gray-100",
-                      )}
-                    >
+                          : "hover:bg-gray-100"
+                      )}>
                       <Link href={item.href} className="flex items-center px-4">
                         <Icon
                           className={cn(
                             "h-5 w-5",
                             isActive
                               ? "text-blue-600 dark:text-blue-400"
-                              : "text-gray-500 dark:text-gray-400",
+                              : "text-gray-500 dark:text-gray-400"
                           )}
                         />
                         <span className="ml-3 font-medium">{item.label}</span>
@@ -110,12 +109,10 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
+              className="py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
               <Link
                 href="/auth/signout"
-                className="flex items-center px-4 text-red-600 dark:text-red-400"
-              >
+                className="flex items-center px-4 text-red-600 dark:text-red-400">
                 <LogOut className="h-5 w-5" />
                 <span className="ml-3 font-medium">Keluar</span>
               </Link>

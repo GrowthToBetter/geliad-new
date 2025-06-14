@@ -1,136 +1,152 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import React from "react";
+import { prisma } from "@/lib/prisma";
+import { userFullPayload } from "@/utils/relationship";
+import { signIn } from "next-auth/react";
+import { findAllUsers, findFiles } from "@/utils/user.query";
+import { getServerSession } from "@/auth";
+import AdminHeaders from "@/components/admin/main/AdminHeaders";
+import TableUser from "@/components/admin/main/TableUser";
 import {
-  deniedSupplier,
-  getPendingSuppliers,
-  verifySupplier,
-} from "@/utils/AdminServerAction";
-import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
-import { z } from "zod";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Users, FileText, Clock } from "lucide-react";
 
-const SupplierSchema = z.object({
-  id: z.string(),
-  member: z.boolean(),
-  user: z.object({
-    name: z.string().nullable(),
-    email: z.string().nullable(),
-  }),
-  supplier_data: z
-    .object({
-      license: z.string().nullable(),
-      omzet: z.string().nullable(),
-      photo_profile: z.string().nullable(),
-    })
-    .nullable(),
-});
+interface CardProps {
+  title: string;
+  data: number | string;
+  desc: string;
+  icon: React.ReactNode;
+}
 
-type Supplier = z.infer<typeof SupplierSchema>;
+export default async function AdminPage() {
+  const dataUser = await findAllUsers({
+    AND: [{ NOT: { role: "ADMIN" } }, { NOT: { role: "GURU" } }],
+  });
 
-export default function SupplierPage() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const dataPaper = await findFiles({
+    AND: [{ NOT: { status: "DENIED" } }, { NOT: { status: "PENDING" } }],
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      const pendingSuppliers = await getPendingSuppliers();
-      const parsedSuppliers = z.array(SupplierSchema).safeParse(pendingSuppliers);
-      if (parsedSuppliers.success) setSuppliers(parsedSuppliers.data);
-    }
-    fetchData();
-  }, []);
+  const dataAdmin = await prisma.user.findMany({
+    where: {
+      AND: [{ NOT: { role: "SISWA" } }, { NOT: { role: "GURU" } }],
+    },
+    include: {
+      userAuth: true,
+      File: {
+        include: {
+          user: { include: { userAuth: true } },
+          TaskValidator: true,
+          comment: { include: { user: true } },
+        },
+      },
+      taskValidator: { include: { user: true } },
+      comment: { include: { file: true } },
+    },
+  });
 
-  async function handleVerify(id: string) {
-    const result = await verifySupplier(id);
-    if (result.success) {
-      setSuppliers((prev) => prev.filter((s) => s.id !== id));
-    }
-  }
+  const dataSubmitted = await findFiles({
+    AND: [{ NOT: { status: "DENIED" } }, { NOT: { status: "VERIFIED" } }],
+  });
 
-  async function handleDenied(id: string) {
-    const result = await deniedSupplier(id);
-    if (result.success) {
-      setSuppliers((prev) => prev.filter((s) => s.id !== id));
-    }
+  const cardItems: CardProps[] = [
+    {
+      title: "Number of Users",
+      data: dataUser.length,
+      desc: "Users who allocated their paper",
+      icon: <Users className="h-5 w-5 text-blue-600" />,
+    },
+    {
+      title: "Verified Papers",
+      data: dataPaper.length,
+      desc: "All verified papers",
+      icon: <FileText className="h-5 w-5 text-green-600" />,
+    },
+    {
+      title: "Pending Submissions",
+      data: dataSubmitted.length,
+      desc: "Malang Telkom Vocational School Achievements",
+      icon: <Clock className="h-5 w-5 text-orange-600" />,
+    },
+  ];
+
+  const session = await getServerSession();
+
+  if (!session) {
+    signIn();
+    return null;
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Verifikasi Supplier</h1>
-      <Card>
-        <CardContent className="p-4">
-          {suppliers.length === 0 ? (
-            <p>Tidak ada supplier yang menunggu verifikasi.</p>
-          ) : (
-            <table className="w-full text-left">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4">Nama</th>
-                  <th className="py-2 px-4">Email</th>
-                  <th className="py-2 px-4">No Telepon</th>
-                  <th className="py-2 px-4">Omzet</th>
-                  <th className="py-2 px-4">Foto</th>
-                  <th className="py-2 px-4">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {suppliers.map((supplier) => (
-                  <tr key={supplier.id} className="border-t">
-                    <td className="py-2 px-4">{supplier.user.name || "-"}</td>
-                    <td className="py-2 px-4">{supplier.user.email || "-"}</td>
-                    <td className="py-2 px-4">{supplier.supplier_data?.license || "-"}</td>
-                    <td className="py-2 px-4">{supplier.supplier_data?.omzet || "-"}</td>
-                    <td className="py-2 px-4">
-                      {supplier.supplier_data?.photo_profile ? (
-                        <Image
-                          src={supplier.supplier_data.photo_profile}
-                          alt="Foto Profil"
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td className="py-2 px-4 w-40">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
-                            Aksi <ChevronDown className="ml-2 h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem
-                            onClick={() => handleVerify(supplier.id)}
-                            className="text-green-600 hover:bg-green-100 cursor-pointer"
-                          >
-                            Verifikasi
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDenied(supplier.id)}
-                            className="text-red-600 hover:bg-red-100 cursor-pointer"
-                          >
-                            Denied
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </CardContent>
-      </Card>
+    <div className="flex flex-col relative min-h-screen bg-gray-50">
+      <section className="w-full">
+        <AdminHeaders data="Dashboard" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+            <p className="text-gray-600">Overview of your system statistics</p>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Statistics
+              </h2>
+              <Badge variant="outline" className="text-sm">
+                Real-time data
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {cardItems.map((item, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition-shadow duration-200">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-600">
+                      {item.title}
+                    </CardTitle>
+                    {item.icon}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-gray-900 mb-1">
+                      {item.data}
+                    </div>
+                    <CardDescription className="text-sm text-gray-500">
+                      {item.desc}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* User Management Section */}
+          <div className="bg-white rounded-lg border shadow-sm">
+            <div className="border-b border-gray-200 px-6 py-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                User Management
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage users and administrators
+              </p>
+            </div>
+
+            <div className="p-6">
+              <TableUser dataAdmin={dataAdmin as userFullPayload[]} />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
+
+export const maxDuration = 60;
