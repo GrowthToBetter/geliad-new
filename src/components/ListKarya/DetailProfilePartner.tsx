@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma";
 import Image from "next/image";
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";

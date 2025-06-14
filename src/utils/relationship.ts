@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma";
 
 export type userWithLastLogin = Prisma.UserGetPayload<{
   include: { userAuth: { select: { last_login: true } } };

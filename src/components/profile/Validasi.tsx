@@ -40,7 +40,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { FileFullPayload, userFullPayload } from "@/utils/relationship";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RequestStatus } from "@prisma/client";
+import { RequestStatus } from "@/generated/prisma";
 
 import { toast } from "sonner";
 import {

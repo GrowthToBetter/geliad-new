@@ -101,7 +101,7 @@ import {
   Scale,
 } from "lucide-react";
 
-import { Class, Genre, RequestStatus, Role } from "@prisma/client";
+import { Class, Genre, RequestStatus, Role } from "@/generated/prisma";
 import {
   FileFullPayload,
   GenreFullPayload,

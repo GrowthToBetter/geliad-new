@@ -2,7 +2,7 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
-import { Class, Prisma } from "@prisma/client";
+import { Class, Prisma } from "@/generated/prisma";
 import { Session } from "next-auth";
 import { FileFullPayload, GenreFullPayload } from "@/utils/relationship";
 import { useRouter } from "next/navigation";

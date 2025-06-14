@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { userFullPayload } from "@/utils/relationship";
-import { Gender } from "@prisma/client";
+import { Gender } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
