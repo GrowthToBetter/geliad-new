@@ -7,8 +7,8 @@ import { getServerSession } from "@/auth";
 import { headers } from "next/headers";
 
 interface Props {
-  params: { id: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function ProfilePartner({ params }: Props) {
@@ -19,8 +19,11 @@ export default async function ProfilePartner({ params }: Props) {
     redirect(`/auth/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
   }
 
+  // Await the params Promise to get the actual parameters
+  const { id } = await params;
+
   const findUser = await prisma.user.findFirst({
-    where: { id: params.id },
+    where: { id },
     include: {
       userAuth: true,
       File: { include: { TaskValidator: true } },
@@ -29,5 +32,5 @@ export default async function ProfilePartner({ params }: Props) {
     },
   });
 
-  return <DetailProfilePartner userId={params.id} userData={findUser!} />;
+  return <DetailProfilePartner userId={id} userData={findUser!} />;
 }
