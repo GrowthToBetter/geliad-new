@@ -6,17 +6,19 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "@/auth";
 import { headers } from "next/headers";
 
-export default async function profilePartner({
-  params,
-}: {
+interface Props {
   params: { id: string };
-}) {
+  searchParams?: Record<string, string | string[] | undefined>;
+}
+
+export default async function ProfilePartner({ params }: Props) {
   const session = await getServerSession();
 
   if (!session?.user?.email) {
     const currentPath = (await headers()).get("x-nextjs-pathname") || "/";
-    return redirect(`/auth/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
+    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
   }
+
   const findUser = await prisma.user.findFirst({
     where: { id: params.id },
     include: {
@@ -26,5 +28,6 @@ export default async function profilePartner({
       comment: { include: { file: true } },
     },
   });
+
   return <DetailProfilePartner userId={params.id} userData={findUser!} />;
 }
