@@ -9,7 +9,13 @@ export default async function studentData() {
     where: { role: "SISWA" },
     include: {
       userAuth: true,
-      File: { include: { TaskValidator: true } },
+      File: {
+        include: {
+          user: { include: { userAuth: true } },
+          TaskValidator: true,
+          comment: { include: { user: true } },
+        },
+      },
       taskValidator: { include: { user: true } },
       comment: { include: { file: true } },
     },
